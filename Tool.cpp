@@ -160,3 +160,34 @@ bool UTool::GetStaticMeshVertexLocations(UStaticMeshComponent* Comp, TArray<FVec
 	//		https://wiki.unrealengine.com/Accessing_mesh_triangles_and_vertex_positions_in_build
 	*/
 }
+
+int32 UTool::GetVertices(const USkeletalMesh& Mesh, const int32 LODIndex, 
+	TArray<FVector3f>& OutPositions, TArray<FVector3f>& OutNormals)
+{
+	OutPositions.Reset();
+	OutNormals.Reset();
+	
+	const FSkeletalMeshRenderData* RenderData = Mesh.GetResourceForRendering();
+	check(RenderData);
+
+	if (!RenderData->LODRenderData.IsValidIndex(LODIndex))
+	{
+		return INDEX_NONE;
+	}
+
+	// Get LOD Data
+	const FSkeletalMeshLODRenderData& LODRenderData = RenderData->LODRenderData[LODIndex];
+
+	// Get Total Num of Vertices (for all sections)
+	const int32 NumVertices = LODRenderData.GetNumVertices();
+	OutPositions.SetNumUninitialized(NumVertices);
+	OutNormals.SetNumUninitialized(NumVertices);
+	
+	for (int32 VertexIndex = 0; VertexIndex < NumVertices; ++VertexIndex)
+	{
+		OutPositions[VertexIndex] = LODRenderData.StaticVertexBuffers.PositionVertexBuffer.VertexPosition(VertexIndex);
+		OutNormals[VertexIndex] = LODRenderData.StaticVertexBuffers.StaticMeshVertexBuffer.VertexTangentZ(VertexIndex);
+	};
+
+	return NumVertices;
+}
