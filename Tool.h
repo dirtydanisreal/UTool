@@ -3,7 +3,11 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-
+class UMaterial;
+class UMaterialFunction;
+class UMaterialExpression;
+class UMaterialExpressionMakeMaterialAttributes;
+struct FExpressionInput;
 UCLASS()
 class UTool : public UObject
 {
@@ -48,5 +52,38 @@ class UTool : public UObject
 	
     static int32 FindClosestVertex(const FVector3f& Point, const TArray<FVector3f>& Vertices);
     
+    UFUNCTION(BlueprintCallable, Category = "Open Unreal Utilities|Editor|Material Editing")
+    static void ConvertMaterialToMaterialAttributes(UMaterial* Material);
     
+    UFUNCTION(BlueprintCallable, Category = "Open Unreal Utilities|Editor|Material Editing")
+    static void InsertMaterialFunctionBeforeResult(
+		UMaterial* Material,
+		UMaterialFunction* MaterialFunction,
+		bool bOnlyAddIfNotPresent = true);
+		
+    UFUNCTION(BlueprintCallable, Category = "Open Unreal Utilities|Editor|Material Editing")
+    static void OpenMaterialEditorAndJumpToExpression(UMaterialExpression* MaterialExpression);
+    
+    static void CopyMaterialAttributeConnections(
+		UMaterial* SourceMaterial,
+		UMaterialExpressionMakeMaterialAttributes* TargetMakeMaterialAttributes);
+		
+    UFUNCTION(BlueprintPure, Category = "Fabulous Utility|Fu Controller Utility", Meta = (DefaultToSelf = "Actor"))
+    static APlayerController* GetPlayerControllerFromActor(AActor* Actor);
+    
+    inline APlayerController* UFuControllerUtility::GetPlayerControllerFromActor(AActor* Actor)
+{
+	return Cast<APlayerController>(GetControllerFromActor(Actor));
+}
+
+UFUNCTION(BlueprintCallable, Category="LyraExt")
+    static bool ChangeMeshMaterials(TArray<UStaticMesh*> Mesh, UMaterialInterface* Material);
+    
+    static UClass* FindClassByShortName(const FString& SearchToken, UClass* DesiredBaseClass, bool bLogFailures = true);
+
+template <typename DesiredClass>
+static TSubclassOf<DesiredClass> FindClassByShortName(const FString& SearchToken, bool bLogFailures = true)
+{
+	return FindClassByShortName(SearchToken, DesiredClass::StaticClass(), bLogFailures);
+}
 };
