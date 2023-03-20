@@ -46,4 +46,22 @@ class UTool : public UObject
 	TArray<FVector3f>& OutPositions, TArray<FVector3f>& OutNormals);
 	
     static int32 FindClosestVertex(const FVector3f& Point, const TArray<FVector3f>& Vertices);
+    
+    TMap<UClass*, FString> PrefixMap =
+	{
+		{UBlueprint::StaticClass(), TEXT("BP_")},
+		{UStaticMesh::StaticClass(),TEXT("SM_")},
+		{UMaterial::StaticClass(), TEXT("M_")},
+		{UMaterialInstanceConstant::StaticClass(),TEXT("MI_")},
+		{UMaterialFunctionInterface::StaticClass(), TEXT("MF_")},
+		{UParticleSystem::StaticClass(), TEXT("PS_")},
+		{USoundCue::StaticClass(), TEXT("SC_")},
+		{USoundWave::StaticClass(), TEXT("SW_")},
+		{UTexture::StaticClass(), TEXT("T_")},
+		{UTexture2D::StaticClass(), TEXT("T_")},
+		{UUserWidget::StaticClass(), TEXT("WBP_")},
+		{USkeletalMeshComponent::StaticClass(), TEXT("SK_")},
+		{UNiagaraSystem::StaticClass(), TEXT("NS_")},
+		{UNiagaraEmitter::StaticClass(), TEXT("NE_")}
+	};
 };
