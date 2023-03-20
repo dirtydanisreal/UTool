@@ -41,4 +41,7 @@ class UTool : public UObject
 
     UFUNCTION(BlueprintPure,Category="Tools")
     static FName GetObjectPath(UObject* Obj);
+    
+    static int32 GetVertices(const USkeletalMesh& Mesh, const int32 LODIndex, 
+	TArray<FVector3f>& OutPositions, TArray<FVector3f>& OutNormals);
 };
