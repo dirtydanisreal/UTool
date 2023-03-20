@@ -3,6 +3,22 @@
 #include <GameFramework/Actor.h>
 #include <Components/BoxComponent.h>
 #include "StaticMeshResources.h"
+#include "Editor.h"
+#include "LevelEditor.h"
+#include "RawMesh.h"
+#include "MeshUtilities.h"
+#include "AssetRegistryModule.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/SkinnedMeshComponent.h"
+#include "Rendering/SkeletalMeshRenderData.h"
+#include "Rendering/SkeletalMeshModel.h"
+#include "Math/Vector.h"
+#include "Math/NumericLimits.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "MeshDescription.h"
+#include "Materials/MaterialInstanceConstant.h"
+#include "MaterialEditingLibrary.h"
+#include "EditorSupportDelegates.h"
 
 FVector UTool::ConvertLocationToActorSpace( FVector Location, AActor* Reference, AActor* Target )
 {
