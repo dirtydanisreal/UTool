@@ -21,6 +21,8 @@
 #include "MaterialEditingLibrary.h"
 #include "Engine/StaticMesh.h"
 #include "EditorSupportDelegates.h"
+#include "Engine/Engine.h"
+#include "AssetRegistryModule.h"
 
 FVector UTool::ConvertLocationToActorSpace( FVector Location, AActor* Reference, AActor* Target )
 {
