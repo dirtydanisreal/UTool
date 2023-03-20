@@ -44,4 +44,6 @@ class UTool : public UObject
     
     static int32 GetVertices(const USkeletalMesh& Mesh, const int32 LODIndex, 
 	TArray<FVector3f>& OutPositions, TArray<FVector3f>& OutNormals);
+	
+    static int32 FindClosestVertex(const FVector3f& Point, const TArray<FVector3f>& Vertices);
 };
