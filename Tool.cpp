@@ -191,3 +191,22 @@ int32 UTool::GetVertices(const USkeletalMesh& Mesh, const int32 LODIndex,
 
 	return NumVertices;
 }
+
+int32 UTool::FindClosestVertex(const FVector3f& Point, const TArray<FVector3f>& Vertices)
+{
+	float MinDistance = TNumericLimits<float>::Max();
+	int32 ClosestIndex = INDEX_NONE;
+
+	// Find Closest SkeletalMesh Vertex.
+	for (int32 VertexIndex = 0; VertexIndex < Vertices.Num(); ++VertexIndex)
+	{
+		const float Distance = FVector3f::Dist(Point, Vertices[VertexIndex]);
+		if (Distance < MinDistance)
+		{
+			MinDistance = Distance;
+			ClosestIndex = VertexIndex;
+		}
+	}
+
+	return ClosestIndex;
+}
