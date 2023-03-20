@@ -47,15 +47,17 @@ class UTool : public UObject
     UFUNCTION(BlueprintPure,Category="Tools")
     static FName GetObjectPath(UObject* Obj);
     
+    UFUNCTION(BlueprintCallable,Category="Tools")
     static int32 GetVertices(const USkeletalMesh& Mesh, const int32 LODIndex, 
 	TArray<FVector3f>& OutPositions, TArray<FVector3f>& OutNormals);
 	
+    UFUNCTION(BlueprintCallable,Category="Tools")	
     static int32 FindClosestVertex(const FVector3f& Point, const TArray<FVector3f>& Vertices);
     
-    UFUNCTION(BlueprintCallable, Category = "Open Unreal Utilities|Editor|Material Editing")
+    UFUNCTION(BlueprintCallable, Category = "Tools")
     static void ConvertMaterialToMaterialAttributes(UMaterial* Material);
     
-    UFUNCTION(BlueprintCallable, Category = "Open Unreal Utilities|Editor|Material Editing")
+    UFUNCTION(BlueprintCallable, Category = "Tools")
     static void InsertMaterialFunctionBeforeResult(
 		UMaterial* Material,
 		UMaterialFunction* MaterialFunction,
@@ -64,6 +66,7 @@ class UTool : public UObject
     UFUNCTION(BlueprintCallable, Category = "Open Unreal Utilities|Editor|Material Editing")
     static void OpenMaterialEditorAndJumpToExpression(UMaterialExpression* MaterialExpression);
     
+    UFUNCTION(BlueprintCallable,Category="Tools")
     static void CopyMaterialAttributeConnections(
 		UMaterial* SourceMaterial,
 		UMaterialExpressionMakeMaterialAttributes* TargetMakeMaterialAttributes);
@@ -76,9 +79,10 @@ class UTool : public UObject
 	return Cast<APlayerController>(GetControllerFromActor(Actor));
 }
 
-UFUNCTION(BlueprintCallable, Category="LyraExt")
+    UFUNCTION(BlueprintCallable, Category="LyraExt")
     static bool ChangeMeshMaterials(TArray<UStaticMesh*> Mesh, UMaterialInterface* Material);
     
+    UFUNCTION(BlueprintCallable,Category="Tools")
     static UClass* FindClassByShortName(const FString& SearchToken, UClass* DesiredBaseClass, bool bLogFailures = true);
 
 template <typename DesiredClass>
