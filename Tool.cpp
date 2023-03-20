@@ -12,12 +12,14 @@
 #include "Components/SkinnedMeshComponent.h"
 #include "Rendering/SkeletalMeshRenderData.h"
 #include "Rendering/SkeletalMeshModel.h"
+#include "Materials/MaterialInterface.h"
 #include "Math/Vector.h"
 #include "Math/NumericLimits.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "MeshDescription.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "MaterialEditingLibrary.h"
+#include "Engine/StaticMesh.h"
 #include "EditorSupportDelegates.h"
 
 FVector UTool::ConvertLocationToActorSpace( FVector Location, AActor* Reference, AActor* Target )
@@ -225,4 +227,125 @@ int32 UTool::FindClosestVertex(const FVector3f& Point, const TArray<FVector3f>& 
 	}
 
 	return ClosestIndex;
+}
+
+bool UTool::ChangeMeshMaterials(TArray<UStaticMesh*> Mesh, UMaterialInterface* Material)
+{
+
+	for (int i = 0; i < Mesh.Num(); i++)
+	{
+		Mesh[i]->Modify();
+		TArray<FStaticMaterial>& Mats = Mesh[i]->GetStaticMaterials();
+		for (int j = 0; j < Mats.Num(); j++)
+		{
+			Mats[j].MaterialInterface = Material;
+
+		}
+		Mesh[i]->PostEditChange();
+	}
+	return true;
+}
+
+UClass* UTool::FindBlueprintClass(const FString& TargetNameRaw, UClass* DesiredBaseClass)
+{
+	FString TargetName = TargetNameRaw;
+	TargetName.RemoveFromEnd(TEXT("_C"), ESearchCase::CaseSensitive);
+
+	TArray<FAssetData> BlueprintList = ULyraDevelopmentStatics::GetAllBlueprints();
+	for (const FAssetData& AssetData : BlueprintList)
+	{
+		if ((AssetData.AssetName.ToString() == TargetName) || (AssetData.ObjectPath.ToString() == TargetName))
+		{
+			if (UBlueprint* BP = Cast<UBlueprint>(AssetData.GetAsset()))
+			{
+				if (UClass* GeneratedClass = BP->GeneratedClass)
+				{
+					if (GeneratedClass->IsChildOf(DesiredBaseClass))
+					{
+						return GeneratedClass;
+					}
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+UClass* UTool::FindClassByShortName(const FString& SearchToken, UClass* DesiredBaseClass, bool bLogFailures)
+{
+	check(DesiredBaseClass);
+
+	FString TargetName = SearchToken;
+
+	// Check native classes and loaded assets first before resorting to the asset registry
+	bool bIsValidClassName = true;
+	if (TargetName.IsEmpty() || TargetName.Contains(TEXT(" ")))
+	{
+		bIsValidClassName = false;
+	}
+	else if (!FPackageName::IsShortPackageName(TargetName))
+	{
+		if (TargetName.Contains(TEXT(".")))
+		{
+			// Convert type'path' to just path (will return the full string if it doesn't have ' in it)
+			TargetName = FPackageName::ExportTextPathToObjectPath(TargetName);
+
+			FString PackageName;
+			FString ObjectName;
+			TargetName.Split(TEXT("."), &PackageName, &ObjectName);
+
+			const bool bIncludeReadOnlyRoots = true;
+			FText Reason;
+			if (!FPackageName::IsValidLongPackageName(PackageName, bIncludeReadOnlyRoots, &Reason))
+			{
+				bIsValidClassName = false;
+			}
+		}
+		else
+		{
+			bIsValidClassName = false;
+		}
+	}
+
+	UClass* ResultClass = nullptr;
+	if (bIsValidClassName)
+	{
+		if (FPackageName::IsShortPackageName(TargetName))
+		{
+			ResultClass = FindObject<UClass>(ANY_PACKAGE, *TargetName);
+		}
+		else
+		{
+			ResultClass = FindObject<UClass>(nullptr, *TargetName);
+		}
+	}
+
+	// If we still haven't found anything yet, try the asset registry for blueprints that match the requirements
+	if (ResultClass == nullptr)
+	{
+		ResultClass = FindBlueprintClass(TargetName, DesiredBaseClass);
+	}
+
+	// Now validate the class (if we have one)
+	if (ResultClass != nullptr)
+	{
+		if (!ResultClass->IsChildOf(DesiredBaseClass))
+		{
+			if (bLogFailures)
+			{
+				UE_LOG(LogConsoleResponse, Warning, TEXT("Found an asset %s but it wasn't of type %s"), *ResultClass->GetPathName(), *DesiredBaseClass->GetName());
+			}
+			ResultClass = nullptr;
+		}
+	}
+	else
+	{
+		if (bLogFailures)
+		{
+			UE_LOG(LogConsoleResponse, Warning, TEXT("Failed to find class of type %s named %s"), *DesiredBaseClass->GetName(), *SearchToken);
+		}
+	}
+
+	return ResultClass;
 }
