@@ -78,6 +78,9 @@ class UTool : public UObject
 {
 	return Cast<APlayerController>(GetControllerFromActor(Actor));
 }
+    UFUNCTION(BlueprintCallable,Category="Tools")
+    static ACharacter* GetCharacter() const;
+
 
     UFUNCTION(BlueprintCallable, Category="LyraExt")
     static bool ChangeMeshMaterials(TArray<UStaticMesh*> Mesh, UMaterialInterface* Material);
