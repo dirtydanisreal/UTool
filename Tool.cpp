@@ -351,3 +351,8 @@ UClass* UTool::FindClassByShortName(const FString& SearchToken, UClass* DesiredB
 
 	return ResultClass;
 }
+
+ACharacter* UTool::GetCharacter()
+{
+	return UGameplayStatics::GetPlayerCharacter(GetWorld(),0);	
+}
