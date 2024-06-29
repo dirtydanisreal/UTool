@@ -46,6 +46,8 @@ class UTool : public UObject
     UFUNCTION(BlueprintCallable,Category="Tools")
     static UObject* LoadObjectFromAssetPath(TSubclassOf<UObject> ObjectClass, FName Path, bool& IsValid);
 
+    UFUNCTION(BlueprintCallable,Category="Tools")
+    static FMatrix GetCameraProjectionMatrix() const;
 
     UFUNCTION(BlueprintPure,Category="Tools")
     static FName GetObjectPath(UObject* Obj);
