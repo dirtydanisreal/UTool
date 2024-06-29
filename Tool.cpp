@@ -23,6 +23,7 @@
 #include "EditorSupportDelegates.h"
 #include "Engine/Engine.h"
 #include "AssetRegistryModule.h"
+#include <Kismet/GameplayStatics.h>
 
 FVector UTool::ConvertLocationToActorSpace( FVector Location, AActor* Reference, AActor* Target )
 {
@@ -44,6 +45,23 @@ FVector UTool::ConvertLocationToActorSpace( FVector Location, AActor* Reference,
                             + Dots.Z * Target->GetActorUpVector();
 
     return TargetLocation + NewDirection;
+}
+
+FMatrix UTool::GetCameraProjectionMatrix() const
+{
+   FMatrix projection_matrix;
+   m_controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+   ULocalPlayer* local_player = m_controller->GetLocalPlayer();
+
+   if (local_player)
+   {
+      FSceneViewProjectionData player_projection_data;
+      local_player->GetProjectionData(local_player->ViewportClient->Viewport, player_projection_data, INDEX_NONE);
+
+      projection_matrix = player_projection_data.ProjectionMatrix;
+   }
+
+   return projection_matrix;
 }
 
 void UTool::ResizeRenderTarget(UTextureRenderTarget2D* render_target, float size_x, float size_y)
