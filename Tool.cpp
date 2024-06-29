@@ -46,6 +46,14 @@ FVector UTool::ConvertLocationToActorSpace( FVector Location, AActor* Reference,
     return TargetLocation + NewDirection;
 }
 
+void UTool::ResizeRenderTarget(UTextureRenderTarget2D* render_target, float size_x, float size_y)
+{
+                if (render_target == nullptr)
+                                return;
+                render_target->ResizeTarget(size_x, size_y);
+}
+
+
 FRotator UTool::ConvertRotationToActorSpace( FRotator Rotation, AActor* Reference, AActor* Target )
 {
     if( Reference == nullptr || Target == nullptr )
