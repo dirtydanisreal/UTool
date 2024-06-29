@@ -41,6 +41,9 @@ class UTool : public UObject
     }
 
     UFUNCTION(BlueprintCallable,Category="Tools")
+    static void ResizeRenderTarget(UTextureRenderTarget2D* render_target, float size_x, float size_y);
+
+    UFUNCTION(BlueprintCallable,Category="Tools")
     static UObject* LoadObjectFromAssetPath(TSubclassOf<UObject> ObjectClass, FName Path, bool& IsValid);
 
 
